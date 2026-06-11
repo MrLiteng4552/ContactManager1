@@ -4,5 +4,6 @@ namespace ContactManager.ViewModels
 {
     public abstract class ViewModelBase : ObservableObject
     {
+    
     }
 }

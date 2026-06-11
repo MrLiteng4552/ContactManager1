@@ -1,0 +1,91 @@
+<Window xmlns="https://github.com/avaloniaui"
+		xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+		xmlns:vm="using:ContactManager.ViewModels"
+		x:Class="ContactManager.Views.MainWindow"
+		x:DataType="vm:MainWindowViewModel"
+		Title="Управление контактами"
+		Width="1100" Height="600"
+		WindowStartupLocation="CenterScreen">
+	<Grid RowDefinitions="*, Auto">
+
+		<Grid Grid.Row="0" Margin="20">
+
+			<Grid IsVisible="{Binding IsViewWindowVisible}" RowDefinitions="Auto, *, Auto">
+				<TextBox Grid.Row="0" Text="{Binding SearchText, Mode=TwoWay}" Watermark="Поиск по ФИО или Email..." Margin="0,0,0,15"/>
+				<DataGrid Grid.Row="1" ItemsSource="{Binding Contacts}" SelectedItem="{Binding SelectedContact}" AutoGenerateColumns="False" IsReadOnly="True" GridLinesVisibility="All" BorderThickness="1" BorderBrush="Gray">
+					<DataGrid.Columns>
+						<DataGridTextColumn Header="ID" Binding="{Binding Id}" Width="60"/>
+						<DataGridTextColumn Header="ФИО" Binding="{Binding FullName}" Width="2.5*"/>
+						<DataGridTextColumn Header="Email" Binding="{Binding Email}" Width="2*"/>
+						<DataGridTextColumn Header="Телефон" Binding="{Binding Phone}" Width="1.5*"/>
+						<DataGridTextColumn Header="Отдел" Binding="{Binding Department.Name}" Width="1.5*"/>
+					</DataGrid.Columns>
+				</DataGrid>
+				<StackPanel Grid.Row="2" Orientation="Horizontal" Spacing="15" Margin="0,15,0,0">
+					<Button Name="DeleteBtn" Content="Удалить выбранный" IsEnabled="{Binding IsContactSelected}" Background="#D32F2F" Foreground="White" Padding="15,8"/>
+					<Button Content="Редактировать выбранный" Command="{Binding GoToEditWindow}" IsEnabled="{Binding IsContactSelected}" Background="#1565C0" Foreground="White" Padding="15,8"/>
+				</StackPanel>
+			</Grid>
+
+			<StackPanel IsVisible="{Binding IsAddWindowVisible}" Spacing="10" MaxWidth="500" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<TextBlock Text="Добавление нового контакта" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#4CAF50" Margin="0,0,0,10"/>
+
+				<TextBlock Text="ФИО: *"/>
+				<TextBox Text="{Binding FullNameInput, Mode=TwoWay}" Watermark="ФИО"/>
+				<TextBlock Text="Необходимо заполнить поле ФИО" Foreground="#D32F2F" FontSize="12" IsVisible="{Binding ShowFullNameError}"/>
+
+				<TextBlock Text="Email: *"/>
+				<TextBox Text="{Binding EmailInput, Mode=TwoWay}" Watermark="Email"/>
+				<TextBlock Text="Необходимо заполнить поле Email" Foreground="#D32F2F" FontSize="12" IsVisible="{Binding ShowEmailError}"/>
+
+				<TextBlock Text="Телефон:"/>
+				<TextBox Text="{Binding PhoneInput, Mode=TwoWay}" Watermark="Телефон"/>
+
+				<TextBlock Text="Отдел:"/>
+				<ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDepartmentInput, Mode=TwoWay}" HorizontalAlignment="Stretch">
+					<ComboBox.ItemTemplate>
+						<DataTemplate><TextBlock Text="{Binding Name}"/></DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<Button Content="Создать и Сохранить" Command="{Binding SaveContactAsync}" IsEnabled="{Binding IsFormValid}" Background="#2E7D32" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,12" FontWeight="Bold" Margin="0,10,0,0"/>
+			</StackPanel>
+
+			<StackPanel IsVisible="{Binding IsEditWindowVisible}" Spacing="10" MaxWidth="500" HorizontalAlignment="Center" VerticalAlignment="Center">
+				<TextBlock Text="Редактирование контакта" FontSize="18" FontWeight="Bold" HorizontalAlignment="Center" Foreground="#2196F3" Margin="0,0,0,10"/>
+
+				<TextBlock Text="ФИО: *"/>
+				<TextBox Text="{Binding FullNameInput, Mode=TwoWay}" Watermark="ФИО"/>
+				<TextBlock Text="Необходимо заполнить поле ФИО" Foreground="#D32F2F" FontSize="12" IsVisible="{Binding ShowFullNameError}"/>
+
+				<TextBlock Text="Email: *"/>
+				<TextBox Text="{Binding EmailInput, Mode=TwoWay}" Watermark="Email"/>
+				<TextBlock Text="Необходимо заполнить поле Email" Foreground="#D32F2F" FontSize="12" IsVisible="{Binding ShowEmailError}"/>
+
+				<TextBlock Text="Телефон:"/>
+				<TextBox Text="{Binding PhoneInput, Mode=TwoWay}" Watermark="Телефон"/>
+
+				<TextBlock Text="Отдел:"/>
+				<ComboBox ItemsSource="{Binding Departments}" SelectedItem="{Binding SelectedDepartmentInput, Mode=TwoWay}" HorizontalAlignment="Stretch">
+					<ComboBox.ItemTemplate>
+						<DataTemplate><TextBlock Text="{Binding Name}"/></DataTemplate>
+					</ComboBox.ItemTemplate>
+				</ComboBox>
+				<Grid ColumnDefinitions="*, *" Margin="0,10,0,0">
+					<Button Grid.Column="0" Content="Обновить данные" Command="{Binding SaveContactAsync}" IsEnabled="{Binding IsFormValid}" Background="#1565C0" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,12" Margin="0,0,5,0" FontWeight="Bold"/>
+					<Button Grid.Column="1" Content="Отмена" Command="{Binding ClearForm}" Background="#555555" Foreground="White" HorizontalAlignment="Stretch" HorizontalContentAlignment="Center" Padding="0,12" Margin="5,0,0,0"/>
+				</Grid>
+			</StackPanel>
+
+		</Grid>
+
+		<Border Grid.Row="1" Background="#252526" Height="60" BorderBrush="Gray" BorderThickness="0,1,0,0">
+			<Grid ColumnDefinitions="Auto, *, Auto" Margin="20,0">
+				<Button Grid.Column="0" Content="  &lt;  " Command="{Binding MovePrev}" FontSize="16" FontWeight="Bold" Padding="15,5"/>
+				<TextBlock Grid.Column="1" Text="{Binding WindowStatusText}" HorizontalAlignment="Center" VerticalAlignment="Center" FontSize="16" FontWeight="SemiBold" Foreground="#E1E1E1" FontFamily="Arial"/>
+				<Button Grid.Column="2" Content="  &gt;  " Command="{Binding MoveNext}" FontSize="16" FontWeight="Bold" Padding="15,5"/>
+			</Grid>
+		</Border>
+
+	</Grid>
+</Window>
+    

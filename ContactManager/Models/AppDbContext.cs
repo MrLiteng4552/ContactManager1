@@ -7,6 +7,7 @@ public class AppDbContext : DbContext
 {
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
     {
+    
     }
 
     public DbSet<Contact> Contacts => Set<Contact>();
@@ -46,18 +47,3 @@ public class AppDbContext : DbContext
     }
 }
 
-/* 
-  =========================================
-  ГЛОБАЛЬНОЕ ОПИСАНИЕ ФАЙЛА (ДЛЯ ЗАЩИТЫ):
-  =========================================
-  Этот класс — Контекст базы данных (DbContext). Главный мост между кодом C# и СУБД SQLite.
-
-  ЧТО ОН ДЕЛАЕТ И ЗАЧЕМ НУЖЕН КРАТКО:
-  1. DbSet — свойства Contacts и Departments представляют собой таблицы базы данных, к которым мы пишем LINQ-запросы.
-  2. Fluent API (метод OnModelCreating) — настраивает жесткие правила бд согласно ТЗ:
-     - .HasIndex(c => c.Email).IsUnique() — делает уникальный индекс на почту (база не даст создать дубликат).
-     - .OnDelete(DeleteBehavior.SetNull) — каскадное поведение. При удалении Отдела база автоматически 
-       проставит NULL сотрудникам в поле DepartmentId, сохранив самих людей (требование лабораторной).
-  3. HasData (Seed Data) — наполняет пустую базу начальными дефолтными строками при самом первом её создании.
-  =========================================
-*/
